@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elinker — Interactive Prototype</title>
+<style>
+:root {
+  --bg:#070814; --panel:#0f1122; --panel2:#151832; --text:#f6f7ff;
+  --muted:#a9aec8; --accent:#7664ff; --accent2:#19d6c1; --line:#282c4b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% 0%,#20235a 0,#0a0b18 42%,#05060d 100%);
+font-family:Inter,Arial,sans-serif;color:var(--text);min-height:100vh}
+header{height:72px;border-bottom:1px solid var(--line);background:rgba(7,8,20,.82);
+backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:800;letter-spacing:-1px} .logo span{color:#7b68ff}
+.badge{font-size:12px;color:#cbd0ef;border:1px solid #343960;border-radius:999px;padding:8px 12px}
+main{display:grid;grid-template-columns:310px 1fr;max-width:1280px;margin:auto;min-height:calc(100vh - 72px)}
+aside{border-right:1px solid var(--line);padding:22px 14px;overflow:auto}
+aside h3{font-size:13px;color:#8f95b8;margin:0 10px 14px;text-transform:uppercase;letter-spacing:1.2px}
+.step{display:flex;gap:11px;align-items:center;padding:10px;border-radius:12px;margin-bottom:4px;color:#b7bbd1;cursor:pointer}
+.step:hover{background:#13162c;color:white}
+.step.active{background:linear-gradient(90deg,#201d4e,#15172e);color:white;border:1px solid #393477}
+.num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#1d2139;font-size:11px;flex:0 0 auto}
+.active .num{background:var(--accent);color:white}
+.step small{display:block;color:#747a9d;font-size:10px;margin-top:2px}
+.content{display:flex;flex-direction:column;align-items:center;padding:30px 25px 38px}
+.hero{width:min(760px,100%);display:flex;justify-content:space-between;align-items:end;margin-bottom:22px}
+.hero h1{margin:0;font-size:27px;letter-spacing:-.6px}
+.hero p{margin:7px 0 0;color:var(--muted);font-size:13px}
+.counter{font-size:12px;color:#b8bdd7;background:#12152b;border:1px solid var(--line);padding:9px 12px;border-radius:10px}
+.viewer{width:min(760px,100%);background:rgba(10,11,24,.72);border:1px solid var(--line);border-radius:24px;padding:25px;display:flex;justify-content:center;box-shadow:0 25px 80px rgba(0,0,0,.35)}
+.viewer img{max-height:690px;max-width:100%;width:auto;border-radius:18px;box-shadow:0 10px 45px rgba(0,0,0,.55)}
+.controls{width:min(760px,100%);display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+button{border:1px solid #3a3e63;background:#15182d;color:white;padding:12px 18px;border-radius:11px;cursor:pointer;font-weight:600}
+button:hover{background:#202447}
+button.primary{background:linear-gradient(90deg,#6554ed,#836fff);border:0}
+button:disabled{opacity:.4;cursor:not-allowed}
+.progress{height:4px;width:min(760px,100%);background:#1b1e35;border-radius:99px;margin-top:14px;overflow:hidden}
+.bar{height:100%;background:linear-gradient(90deg,#6554ed,#20d8c2);width:5.55%;transition:.25s}
+.tip{width:min(760px,100%);margin-top:18px;padding:15px 17px;border:1px solid var(--line);background:#0e1020;border-radius:14px;color:#9fa5c3;font-size:12px;line-height:1.55}
+.tip strong{color:#f3f4ff}
+@media(max-width:850px){main{grid-template-columns:1fr}aside{display:none}header{padding:0 16px}.content{padding:20px 12px}.viewer{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">E<span>linker</span></div>
+  <div class="badge">Follow • Demo</div>
+</header>
+<main>
+<aside>
+  <h3>Prototype Flow</h3>
+  <div id="steps"></div>
+</aside>
+<section class="content">
+  <div class="hero">
+    <div>
+      <h1 id="title">Welcome to Elinker</h1>
+      <p id="desc">Connecting Skills to Opportunities</p>
+    </div>
+    <div class="counter" id="counter">01 / 18</div>
+  </div>
+  <div class="viewer"><img id="screen" src="assets/Screenshot 2026-09-23 124111.png" alt="Elinker prototype screen"></div>
+  <div class="controls">
+    <button id="prev">← Previous</button>
+    <button id="next" class="primary">Next →</button>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+  <div class="tip"><strong>Demo:</strong> Don't You Know How To Publish A Job Post & Find Workers?Use the Next button or select any step from the left. </div>
+</section>
+</main>
+<script>
+const slides = [{"file": "assets/Screenshot 2026-09-23 124111.png", "title": "Welcome to Elinker", "desc": "Connecting Skills to Opportunities"}, {"file": "assets/Screenshot 2026-09-23 124147.png", "title": "3-Step Overview", "desc": "Create profile → Browse jobs → Connect with employers"}, {"file": "assets/Screenshot 2026-09-23 124232.png", "title": "Login Button", "desc": "Sign in to continue"}, {"file": "assets/Screenshot 2026-09-23 124303.png", "title": "Login Page", "desc": "Login your Elinker account"}, {"file": "assets/Screenshot 2026-09-23 124319.png", "title": "Sign Up", "desc": "Register as a job seeker"}, {"file": "assets/Screenshot 2026-09-23 124330.png", "title": "Create Your Profile", "desc": "Add your professional information"}, {"file": "assets/Screenshot 2026-09-23 124341.png", "title": "Complete Profile", "desc": "Skills, experience and other details"}, {"file": "assets/Screenshot 2026-09-26 191802.png", "title": "Profile Created", "desc": "Your Elinker profile is ready"}, {"file": "assets/Screenshot 2026-09-26 191814.png", "title": "Edit Profile Button", "desc": "Update your professional information"}, {"file": "assets/Screenshot 2026-09-23 124417.png", "title": "Edit Profile Page", "desc": "Browse available opportunities"}, {"file": "assets/Screenshot 2026-09-23 124431.png", "title": "Profile Status", "desc": "Choose the location and job preferences"}, {"file": "assets/Screenshot 2026-09-23 124458.png", "title": "My Posted Jobs", "desc": "Manage jobs you have posted"}, {"file": "assets/Screenshot 2026-09-23 124515.png", "title": "Post a New Job", "desc": "Create and publish a job vacancy"}, {"file": "assets/Screenshot 2026-09-23 124525.png", "title": "Post Job Form", "desc": "Add job details, requirements and location"}, {"file": "assets/Screenshot 2026-09-23 124537.png", "title": "Job Post Boost", "desc": "Optional promotion / boost options"}, {"file": "assets/Screenshot 2026-09-23 124547.png", "title": "Your Public Post Status", "desc": "Account and navigation options"}, {"file": "assets/Screenshot 2026-09-23 124559.png", "title": "Post Will Post Appear To Workers", "desc": "Workers will see your post"}, {"file": "assets/Screenshot 2026-09-23 124616.png", "title": "Finnaly Views", "desc": "Check from your account"}];
+let index = 0;
+const screen = document.getElementById('screen');
+const title = document.getElementById('title');
+const desc = document.getElementById('desc');
+const counter = document.getElementById('counter');
+const bar = document.getElementById('bar');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const steps = document.getElementById('steps');
+
+slides.forEach((s,i)=>{
+  const el=document.createElement('div');
+  el.className='step';
+  el.innerHTML=`<div class="num">${String(i+1).padStart(2,'0')}</div><div>${s.title}<small>${s.desc}</small></div>`;
+  el.onclick=()=>show(i);
+  steps.appendChild(el);
+});
+
+function show(i){
+  index=Math.max(0,Math.min(slides.length-1,i));
+  const s=slides[index];
+  screen.src=s.file; title.textContent=s.title; desc.textContent=s.desc;
+  counter.textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  bar.style.width=((index+1)/slides.length*100)+'%';
+  document.querySelectorAll('.step').forEach((x,n)=>x.classList.toggle('active',n===index));
+  prev.disabled=index===0; next.disabled=index===slides.length-1;
+}
+prev.onclick=()=>show(index-1); next.onclick=()=>show(index+1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')show(index+1); if(e.key==='ArrowLeft')show(index-1);});
+show(0);
+</script>
+</body>
+</html>
